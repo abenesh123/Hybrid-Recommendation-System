@@ -4,6 +4,8 @@ import numpy as np
 import pandas as pd
 import warnings
 warnings.filterwarnings("ignore")
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
 
 st.set_page_config(
     page_title="Movie Recommendation System",
@@ -14,10 +16,11 @@ st.set_page_config(
 @st.cache_resource
 def load_model():
     tfidf=joblib.load("tfidf_vectorizer.pkl")
-    cosine_sim=joblib.load("cosine_sim.pkl")
     svd_preds=joblib.load("SVD_prediction.pkl")
     movies_content=joblib.load("movies_content.pkl")
     user_movie_matrix=joblib.load("user_movie_matrix.pkl")
+    tfidf_matrix=tfidf.transform(movies_content["title"])
+    cosine_sim=cosine_similarity(tfidf_matrix,tfidf_matrix)
     return tfidf,cosine_sim,svd_preds,movies_content,user_movie_matrix
 
 tfidf,cosine_sim,svd_preds,movies_content,user_movie_matrix=load_model()
